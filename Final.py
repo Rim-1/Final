@@ -138,6 +138,7 @@ class EventManagentSystemGUI: #Define GUI class
     def delete_record(self):
         record_type = self.record_type.get() #Check the selected record type
         index = self.listbox.curselection() #Get the index of the selected item
+        
         #Check if an item is selected
         if index:
             index = int(index[0]) #Convert index to integer
@@ -161,10 +162,14 @@ class EventManagentSystemGUI: #Define GUI class
             messagebox.showerror("Error", "Please select a record to delete.") #Show wrror message if no item is selected
 
     def modify_record(self):
-        record_type = self.record_type.get()
-        index = self.listbox.curselection()
+        record_type = self.record_type.get() #Get the selected record type
+        index = self.listbox.curselection() #Get the index of the selected item
+
+        #Check if an item is selected
         if index:
-            index = int(index[0])
+            index = int(index[0]) #Convert index to integer
+
+            #Check the selected record type and call modify_record_details method
             if record_type == "Employee":
                 self.modify_record_details(index, self.employee, "Employee")
             elif record_type == "Event":
@@ -178,7 +183,7 @@ class EventManagentSystemGUI: #Define GUI class
             elif record_type == "Caterers":
                 self.modify_record_details(index, self.caterers, "Caterers")
         else:
-            messagebox.showerror("Error", "Please select a record to modify.")
+            messagebox.showerror("Error", "Please select a record to modify.") #Show error message if no item is selected
 
     def modify_record_details(self, index, record_list, record_type):
         #Open a new top-level window for modifying record details
@@ -202,16 +207,19 @@ class EventManagentSystemGUI: #Define GUI class
             entry_list.append(entry) #Add entry field to entry_list for future reference
 
         def save_record():
+            #Iterate over attributes and update record with entry values
             for i, attribute in enumerate(attributes):
-                setattr(record, attribute, entry_list[i].get())
-            messagebox.showinfo("Success", f"{record_type} modified successfully.")
-            top.destroy()
-            self.display_record()
-
+                setattr(record, attribute, entry_list[i].get()) #Get attribute value 
+            messagebox.showinfo("Success", f"{record_type} modified successfully.") #Show success message
+            top.destroy() #Close
+            self.display_record() #Refresh the displayed records
+            
+        #Create a save botton 
         save_button = tk.Button(top, text="Save", command=save_record)
         save_button.grid(row=len(attributes), columnspan=2, padx=5, pady=5)
 
     def get_record_attributes(self, record_type):
+        #Define attributes based on the record type
         if record_type == "Employee":
             return ["name", "employee_ID", "department", "job", "salary", "age", "dob", "passport"]
         elif record_type == "Event":
@@ -227,14 +235,17 @@ class EventManagentSystemGUI: #Define GUI class
             return ["caterers_ID", "name", "address", "contact_details", "menu", "min_guests", "max_guests"]
 
     def display_record(self):
+        #Destroy exisiting listbox frame
         try:
             self.listbox_frame.destroy()
         except AttributeError:
             pass
 
+        #Create a new listbox frame
         self.listbox_frame = tk.Frame(self.main_frame)
         self.listbox_frame.grid(row=2, column=0, columnspan=4, padx=5, pady=5)
 
+        #Determine the record type and corresponding labels
         record_type = self.record_type.get()
         if record_type == "Employee":
             records = self.employee
@@ -256,20 +267,24 @@ class EventManagentSystemGUI: #Define GUI class
             records = self.caterers
             labels = ["Caterers ID", "Name", "Address", "Contact Details", "Menu", "Min Guests", "Max Guests"]
 
+        #Create a listbox to display records
         self.listbox = tk.Listbox(self.listbox_frame, width=100)
         self.listbox.grid(row=0, column=0, padx=5, pady=5)
 
+        #Populate the listbox with record details
         for record in records:
             record_details = ""
             for label, attribute in zip (labels, record.__dict__.values()):
-                record_details += f"{label}: {attribute}  -  "
+                record_details += f"{label}: {attribute}  -  " #Combine label and attribute
             self.listbox.insert(tk.END, record_details)
 
+        #Add a scrollbar 
         scrollbar = tk.Scrollbar(self.listbox_frame, orient=tk.VERTICAL)
         scrollbar.config(command=self.listbox.yview)
-        scrollbar.grid(row=0, column=1, sticky=tk.N + tk.S)
+        ##The sticky parameter ensures that the scrollbar remains aligend vertically and spans from top to bottom
+        scrollbar.grid(row=0, column=1, sticky=tk.N + tk.S)  
 
-        self.listbox.config(yscrollcommand=scrollbar.set)
+        self.listbox.config(yscrollcommand=scrollbar.set) #Connectlistbox and scrollbar
 
     def add_employee(self):
         top = tk.Toplevel(self.master)
