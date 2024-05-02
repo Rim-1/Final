@@ -120,7 +120,8 @@ class EventManagentSystemGUI: #Define GUI class
         self.record_type_menu.grid(row=1, column=1, columnspan=3, padx=5, pady=5) #Place dropdown menu in grid layout
 
     def add_record(self):
-        record_type = self.record_type.get()
+        record_type = self.record_type.get() #Get the selected record type
+        #Check the selected record type and call the corresponding add function
         if record_type == "Employee":
             self.add_employee()
         elif record_type == "Event":
@@ -135,10 +136,13 @@ class EventManagentSystemGUI: #Define GUI class
             self.add_caterers()
 
     def delete_record(self):
-        record_type = self.record_type.get()
-        index = self.listbox.curselection()
+        record_type = self.record_type.get() #Check the selected record type
+        index = self.listbox.curselection() #Get the index of the selected item
+        #Check if an item is selected
         if index:
-            index = int(index[0])
+            index = int(index[0]) #Convert index to integer
+
+            #Check the selected record type and delete the corresponding record
             if record_type == "Employee":
                 del self.employee[index]
             elif record_type == "Event":
@@ -151,10 +155,10 @@ class EventManagentSystemGUI: #Define GUI class
                 del self.venue[index]
             elif record_type == "Caterers":
                 del self.caterers[index]
-            messagebox.showinfo("Success", "Record deleted successfully.")
-            self.display_record()
+            messagebox.showinfo("Success", "Record deleted successfully.") #Show success message after deleting the record
+            self.display_record() #Refresh the display to reflect changes
         else:
-            messagebox.showerror("Error", "Please select a record to delete.")
+            messagebox.showerror("Error", "Please select a record to delete.") #Show wrror message if no item is selected
 
     def modify_record(self):
         record_type = self.record_type.get()
